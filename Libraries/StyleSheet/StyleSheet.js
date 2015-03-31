@@ -62,8 +62,16 @@ class StyleSheet {
   static create(obj: {[key: string]: any}): {[key: string]: number} {
     var result = {};
     for (var key in obj) {
-      StyleSheetValidation.validateStyle(key, obj);
-      result[key] = StyleSheetRegistry.registerStyle(obj[key]);
+      var styleObj = obj[key];
+      var styleObjKeys = styleObj.keys();
+
+      if (styleObj[styleObjKeys[0]].keys().length != 0) {
+        StyleSheetValidation.validateIsNestedStyle(styleObj);
+        result[key] = StyleSheet.create(styleObj);
+      } else {
+        StyleSheetValidation.validateStyle(key, obj);
+        result[key] = StyleSheetRegistry.registerStyle(styleObj);
+      }
     }
     return result;
   }

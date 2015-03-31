@@ -49,6 +49,23 @@ class StyleSheetValidation {
     }
   }
 
+  static validateIsNestedStyle(nestedStyles) {
+    if (!__DEV__) {
+      return;
+    }
+
+    // if you are nesting styles no parent element may have anything but
+    // objects ({}) as children
+    for (var prop in nestedStyles) {
+      var styleObj = nestedStyles[prop];
+      if (Object.prototype.toString.call(styleObj) !== '[object Object]') {
+        styleError('"' + styleObj + '" is not a plain Javascript object', prop,
+          'StyleSheet ' + prop, 'Parents of nested styles can only have plain '
+          + 'Javascript objects ({...}) as children');
+      }
+    }
+  }
+
   static addValidStylePropTypes(stylePropTypes) {
     for (var key in stylePropTypes) {
       invariant(
